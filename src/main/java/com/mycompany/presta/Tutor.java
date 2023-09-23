@@ -18,6 +18,9 @@ public class Tutor {
         this.correo = correo;
     }
 
+    public Tutor() {
+    }
+
     public String getNombre() {
         return nombre;
     }

@@ -4,6 +4,7 @@
  */
 package com.mycompany.presta;
 
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /**
@@ -51,7 +52,7 @@ public class PrestaInterfaz extends javax.swing.JFrame {
         textField_usuarioEmail = new javax.swing.JTextField();
         textField_UsuarioTipo = new javax.swing.JTextField();
         panel_agregarMateriales = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
+        panel_inventario = new javax.swing.JPanel();
         scrollPane_inventario = new javax.swing.JScrollPane();
         table_inventario = new javax.swing.JTable();
         panel_agregarMaterial = new javax.swing.JPanel();
@@ -294,7 +295,7 @@ public class PrestaInterfaz extends javax.swing.JFrame {
 
         panel_agregarMateriales.setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Inventario"));
+        panel_inventario.setBorder(javax.swing.BorderFactory.createTitledBorder("Inventario"));
 
         table_inventario.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -317,18 +318,18 @@ public class PrestaInterfaz extends javax.swing.JFrame {
         });
         scrollPane_inventario.setViewportView(table_inventario);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout panel_inventarioLayout = new javax.swing.GroupLayout(panel_inventario);
+        panel_inventario.setLayout(panel_inventarioLayout);
+        panel_inventarioLayout.setHorizontalGroup(
+            panel_inventarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_inventarioLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(scrollPane_inventario, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        panel_inventarioLayout.setVerticalGroup(
+            panel_inventarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_inventarioLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(scrollPane_inventario, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
@@ -377,7 +378,7 @@ public class PrestaInterfaz extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(panel_agregarMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(panel_inventario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panel_agregarMaterialesLayout.setVerticalGroup(
@@ -385,7 +386,7 @@ public class PrestaInterfaz extends javax.swing.JFrame {
             .addGroup(panel_agregarMaterialesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel_agregarMaterialesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panel_inventario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel_agregarMaterial, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(92, Short.MAX_VALUE))
         );
@@ -608,7 +609,31 @@ public class PrestaInterfaz extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        //String s = JOptionPane.showInputDialog("introduzca su correo: ");
+        ArrayList<Usuario> usuarios;
+        usuarios = new ArrayList();
+        Administrador admin1 = new Administrador("Josue Peñuelas Torres", "penuelas.josue@uabc.edu.mx", 0);
+        Tutor tutor1 = new Tutor("Linda Eugenia Arredondo Acosta", "linda_arredondo@uabc.edu.mx");
+        Alumno alum1 = new Alumno(1169153, tutor1, "Alfonso Trejo Robles", "trejo.alfonso@uabc.edu.mx", 3);
+        usuarios.add(admin1);
+        usuarios.add(alum1);
+        String s = JOptionPane.showInputDialog("introduzca su correo: ");
+        
+         Usuario usuarioEncontrado = null;
+
+        for (Usuario usuario : usuarios) {
+            if (usuario.getCorreo().equals(s)) {
+                usuarioEncontrado = usuario;
+                break;
+            }
+        }
+        
+        if (usuarioEncontrado != null) {
+            System.out.println("Usuario encontrado");
+            String nombre = usuarioEncontrado.getNombre();
+        } else {
+            System.out.println("Usuario no encontrado.");
+        }
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new PrestaInterfaz().setVisible(true);
@@ -626,7 +651,6 @@ public class PrestaInterfaz extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> comboBox_estadoFiltro;
     private javax.swing.JComboBox<String> comboBox_materialFiltro;
     private javax.swing.JComboBox<String> comboBox_materiales;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel label_cantidad;
     private javax.swing.JLabel label_estadoMaterial;
@@ -642,6 +666,7 @@ public class PrestaInterfaz extends javax.swing.JFrame {
     private javax.swing.JPanel panel_filtroMateriales;
     private javax.swing.JPanel panel_generarPrestamo;
     private javax.swing.JPanel panel_informacionUsuario;
+    private javax.swing.JPanel panel_inventario;
     private javax.swing.JPanel panel_material;
     private javax.swing.JPanel panel_nombreDelUsuario;
     private javax.swing.JPanel panel_perfilUsuario;

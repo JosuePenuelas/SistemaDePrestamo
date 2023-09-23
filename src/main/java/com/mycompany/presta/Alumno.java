@@ -19,6 +19,10 @@ public class Alumno extends Usuario {
         this.tutor = tutor;
     }
 
+    public Alumno() {
+        
+    }
+
     public Alumno(int matricula, Tutor tutor) {
         this.matricula = matricula;
         this.tutor = tutor;

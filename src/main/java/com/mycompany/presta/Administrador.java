@@ -14,9 +14,12 @@ public class Administrador extends Usuario {
 
     private ArrayList<Material> inventario;
 
-    public Administrador(ArrayList<Material> inventario, String nombre, String correo, int tipoUsuario) {
+    public Administrador(String nombre, String correo, int tipoUsuario) {
         super(nombre, correo, tipoUsuario);
-        this.inventario = inventario;
+        inventario = new ArrayList();
+    }
+
+    public Administrador() {
     }
 
     public Administrador(ArrayList<Material> inventario) {
@@ -33,6 +36,11 @@ public class Administrador extends Usuario {
 
     public void agregarMaterialInventario(Material material){
         inventario.add(material);
+    }
+
+    @Override
+    public String toString() {
+        return "Administrador{" + "inventario=" + inventario + '}';
     }
     
 }
