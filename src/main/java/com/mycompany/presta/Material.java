@@ -6,6 +6,7 @@ package com.mycompany.presta;
 
 import java.util.Date;
 
+
 /**
  *
  * @author Green
@@ -27,6 +28,14 @@ public class Material {
         this.nombre = nombre;
         descripcion = " ";
         this.necesitaPotencia = necesitaPotencia;
+    }
+
+    public Material(String nombre, String descripcion, String potenciador) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.potenciador = potenciador;
+        fechaPedido = new Date();
+        fueDevuelto = false;
     }
 
     public Material() {

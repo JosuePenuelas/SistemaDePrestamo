@@ -4,6 +4,15 @@
  */
 package com.mycompany.presta;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.ParseException;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -77,4 +86,51 @@ public class Usuario {
         }
         return usuarioTipo;
     }
+    
+    public void cargarPrestamos(String nombre) throws IOException, ParseException {
+        FileReader fr = null;
+        BufferedReader br = null;
+        try {
+            fr = new FileReader(new File(nombre));
+            br = new BufferedReader(fr);
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String arreglo[] = linea.split(",");
+                Material m = new Material(arreglo[0], arreglo[1], arreglo[2]);
+                SimpleDateFormat sdf = new SimpleDateFormat(arreglo[3]);
+                Date date = sdf.parse(arreglo[3]);
+                m.setFechaPedido(date);
+                m.setFueDevuelto(Boolean.parseBoolean(arreglo[4]));
+                prestamos.add(m);
+            }
+        } catch (IOException | NumberFormatException ex) {
+        } finally {
+            try {
+                if (fr != null) {
+                    fr.close();
+                }
+            } catch (IOException ex) {
+            }
+        }
+    }
+    
+    public void guardarPrestamo(String nombre, Material material) throws IOException {
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter(new File(nombre), true);
+            pw = new PrintWriter(fichero);
+            String linea = material.getNombre() + "," + material.getDescripcion() + "," + material.getPotenciador() + "," + material.getFechaPedido() + "," + material.isFueDevuelto();
+            pw.println(linea); 
+        } catch (IOException ex) {
+        } finally {
+            try {
+                if (fichero != null) {
+                    fichero.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+    }
+    
 }

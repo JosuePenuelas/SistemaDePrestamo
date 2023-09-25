@@ -28,15 +28,53 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
     ArrayList<Material> inventario = new ArrayList();
     Usuario usuarioIdentificado = null;
     boolean inicioSesion = false;
+    String ruta = "C:\\Users\\Green\\Documents\\NetBeansProjects\\Presta\\";
     
     public PrestaInterfaz() throws IOException {
         initComponents();
-        cargarTutores("C:\\Users\\Green\\Documents\\NetBeansProjects\\Presta\\tutoresBase.csv");
+        cargarTutores(ruta + "tutoresBase.csv");
         mostrarTurores();
-        cargarUsuarios("C:\\Users\\Green\\Documents\\NetBeansProjects\\Presta\\usuariosBase.csv");
+        cargarUsuarios(ruta + "usuariosBase.csv");
         mostrarUsuarios();
         cargarInventario();
         cargarComboBox();
+        iniciarSesion();
+    }
+    
+    public int recibirId(){
+        int id = 0;
+        int t = usuarioIdentificado.getTipoUsuario();
+        switch(t){
+            case 0:
+                Administrador user = (Administrador) usuarioIdentificado;
+                id = user.getId();
+                break;
+            case 1:
+                System.out.println("todavia no esta creado");
+                break;
+                
+            case 2:
+                Docente d = (Docente) usuarioIdentificado;
+                id = d.getNumEmpleado();
+                break;
+                
+            case 3:
+                Alumno al = (Alumno) usuarioIdentificado;
+                id = al.getMatricula();
+                break;
+        }
+        
+        return id;
+    }
+    
+    public boolean verficarMaterialSeleccionado(String material){
+        boolean b = false;
+        for (int i = 0; i < inventario.size(); i++) {
+            if(inventario.get(i).getNombre().equals(material)){
+                b = inventario.get(i).isNecesitaPotencia();
+            }
+        }
+        return b;
     }
 
     public void mostrarTurores() {
@@ -77,10 +115,6 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Error: Ese cuenta no se encuentra registrada");
             }
         }
-    }
-
-    public void pedirPrestamo() throws IOException {
-
     }
 
     public void agregarMaterial() throws IOException {
@@ -178,8 +212,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
                         usuarios.add(d);
                         break;
                     case "3":
-                        System.out.println(arreglo[3]);
-                        Alumno al = new Alumno(Integer.parseInt(arreglo[0]), buscarTutor(arreglo[3]), (String) arreglo[1], (String) arreglo[2], Integer.parseInt(arreglo[4]));
+                        Alumno al = new Alumno(Integer.parseInt(arreglo[0]), buscarTutor(arreglo[3]), arreglo[1], arreglo[2], Integer.parseInt(arreglo[4]));
                         usuarios.add(al);
                         break;
                     default:
@@ -219,7 +252,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
             String linea;
             while ((linea = br.readLine()) != null) {
                 String arreglo[] = linea.split(",");
-                Tutor m = new Tutor((String) arreglo[0], (String) arreglo[1]);
+                Tutor m = new Tutor(arreglo[0], arreglo[1]);
                 tutores.add(m);
             }
         } catch (Exception ex) {
@@ -242,7 +275,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
             fichero = new FileWriter(new File(nombre), true);
             pw = new PrintWriter(fichero);
             String linea = material.getId() + "," + material.getNombre() + "," + material.isNecesitaPotencia();
-            pw.println(linea);
+            pw.println(linea); 
         } catch (IOException ex) {
         } finally {
             try {
@@ -263,11 +296,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
             String linea;
             while ((linea = br.readLine()) != null) {
                 String arreglo[] = linea.split(",");
-                boolean b = false;
-                if (arreglo[2].equals("true")) {
-                    b = true;
-                }
-                Material m = new Material(Integer.parseInt(arreglo[0]), arreglo[1], b);
+                Material m = new Material(Integer.parseInt(arreglo[0]), arreglo[1], Boolean.parseBoolean(arreglo[2]));
                 inventario.add(m);
             }
         } catch (IOException | NumberFormatException ex) {
@@ -297,6 +326,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
         scrollPane_materialesPrestamo = new javax.swing.JScrollPane();
         table_materialesPrestamo = new javax.swing.JTable();
         button_enviarPrestamo = new javax.swing.JButton();
+        button_eliminarMaterial = new javax.swing.JButton();
         panel_material = new javax.swing.JPanel();
         label_generarPrestamoMaterial = new javax.swing.JLabel();
         comboBox_materiales = new javax.swing.JComboBox<>();
@@ -335,8 +365,17 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
         textField_nombreMaterial = new javax.swing.JTextField();
         checkBox_Potencia = new javax.swing.JCheckBox();
         button_agregarMaterialInventario = new javax.swing.JButton();
-        panel_devolucionPrestamo = new javax.swing.JPanel();
         panel_prestamoMaterial = new javax.swing.JPanel();
+        panel_usuariosPrestamo = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        list_usuariosPrestamos = new javax.swing.JList<>();
+        textField_buscarUsuarioPrestamo = new javax.swing.JTextField();
+        panel_marterialesPedidos = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        table_materialesPedidos = new javax.swing.JTable();
+        button_aceptarPrestamo = new javax.swing.JButton();
+        button_eliminarPrestamo = new javax.swing.JButton();
+        panel_devolucionPrestamo = new javax.swing.JPanel();
         panel_titulo = new javax.swing.JPanel();
         label_titulo = new javax.swing.JLabel();
         panel_nombreDelUsuario = new javax.swing.JPanel();
@@ -378,6 +417,18 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
         scrollPane_materialesPrestamo.setViewportView(table_materialesPrestamo);
 
         button_enviarPrestamo.setText("Enviar préstamo");
+        button_enviarPrestamo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_enviarPrestamoActionPerformed(evt);
+            }
+        });
+
+        button_eliminarMaterial.setText("Eliminar");
+        button_eliminarMaterial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_eliminarMaterialActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panel_prestamoLayout = new javax.swing.GroupLayout(panel_prestamo);
         panel_prestamo.setLayout(panel_prestamoLayout);
@@ -389,9 +440,11 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
                     .addGroup(panel_prestamoLayout.createSequentialGroup()
                         .addComponent(label_prestamo)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(scrollPane_materialesPrestamo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)))
+                    .addComponent(scrollPane_materialesPrestamo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_prestamoLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(button_eliminarMaterial)
+                .addGap(18, 18, 18)
                 .addComponent(button_enviarPrestamo)
                 .addContainerGap())
         );
@@ -403,7 +456,9 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrollPane_materialesPrestamo, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
-                .addComponent(button_enviarPrestamo)
+                .addGroup(panel_prestamoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(button_enviarPrestamo)
+                    .addComponent(button_eliminarMaterial))
                 .addContainerGap())
         );
 
@@ -411,8 +466,13 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
 
         label_generarPrestamoMaterial.setText("Material");
 
+        comboBox_materiales.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBox_materialesActionPerformed(evt);
+            }
+        });
+
         textField_descripcion.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        textField_descripcion.setText("descripción");
         textField_descripcion.setToolTipText("");
         textField_descripcion.setBorder(javax.swing.BorderFactory.createTitledBorder("Descripción"));
 
@@ -497,7 +557,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
                 .addGroup(panel_generarPrestamoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(panel_prestamo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel_material, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(168, Short.MAX_VALUE))
+                .addContainerGap(209, Short.MAX_VALUE))
         );
 
         paneles_presta.addTab("Generar Préstamo", panel_generarPrestamo);
@@ -562,7 +622,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_tutorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel_tutorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(textField_tutorCorreo, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
+                    .addComponent(textField_tutorCorreo, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
                     .addComponent(textField_tutorNombre))
                 .addGap(15, 15, 15))
         );
@@ -594,7 +654,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
                 .addGroup(panel_perfilUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(panel_tutor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel_informacionUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(179, Short.MAX_VALUE))
+                .addContainerGap(220, Short.MAX_VALUE))
         );
 
         paneles_presta.addTab("Perfil De Usuario", panel_perfilUsuario);
@@ -673,9 +733,16 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jScrollPane1.setViewportView(table_prestamos);
@@ -686,7 +753,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
             panel_prestamosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_prestamosLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panel_prestamosLayout.setVerticalGroup(
@@ -715,7 +782,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
                 .addGroup(panel_consultarMisPrestamosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(panel_prestamos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel_filtroMateriales, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(129, Short.MAX_VALUE))
+                .addContainerGap(170, Short.MAX_VALUE))
         );
 
         paneles_presta.addTab("Consultar Mis Préstamos", panel_consultarMisPrestamos);
@@ -729,15 +796,22 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Id", "Nombre", "Necesita Potencia"
+                "Id", "Nombre", "Necesita Potencia", "Seleccionar"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         scrollPane_inventario.setViewportView(table_inventario);
@@ -748,7 +822,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
             panel_inventarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_inventarioLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollPane_inventario, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                .addComponent(scrollPane_inventario, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panel_inventarioLayout.setVerticalGroup(
@@ -818,36 +892,131 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
                 .addGroup(panel_agregarMaterialesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(panel_inventario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel_agregarMaterial, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(109, Short.MAX_VALUE))
+                .addContainerGap(150, Short.MAX_VALUE))
         );
 
         paneles_presta.addTab("Agregar Materiales", panel_agregarMateriales);
 
-        javax.swing.GroupLayout panel_devolucionPrestamoLayout = new javax.swing.GroupLayout(panel_devolucionPrestamo);
-        panel_devolucionPrestamo.setLayout(panel_devolucionPrestamoLayout);
-        panel_devolucionPrestamoLayout.setHorizontalGroup(
-            panel_devolucionPrestamoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 813, Short.MAX_VALUE)
+        panel_usuariosPrestamo.setBorder(javax.swing.BorderFactory.createTitledBorder("Pedidos"));
+
+        jScrollPane3.setViewportView(list_usuariosPrestamos);
+
+        textField_buscarUsuarioPrestamo.setBorder(javax.swing.BorderFactory.createTitledBorder("Id (matricula o numero de empleado)"));
+
+        javax.swing.GroupLayout panel_usuariosPrestamoLayout = new javax.swing.GroupLayout(panel_usuariosPrestamo);
+        panel_usuariosPrestamo.setLayout(panel_usuariosPrestamoLayout);
+        panel_usuariosPrestamoLayout.setHorizontalGroup(
+            panel_usuariosPrestamoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_usuariosPrestamoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_usuariosPrestamoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+                    .addComponent(textField_buscarUsuarioPrestamo))
+                .addContainerGap())
         );
-        panel_devolucionPrestamoLayout.setVerticalGroup(
-            panel_devolucionPrestamoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 433, Short.MAX_VALUE)
+        panel_usuariosPrestamoLayout.setVerticalGroup(
+            panel_usuariosPrestamoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_usuariosPrestamoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(textField_buscarUsuarioPrestamo, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
-        paneles_presta.addTab("Devolución de Material", panel_devolucionPrestamo);
+        panel_marterialesPedidos.setBorder(javax.swing.BorderFactory.createTitledBorder("Materiales"));
+
+        table_materialesPedidos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Material", "Descripción", "Potencia", "Seleccionar"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                true, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(table_materialesPedidos);
+
+        button_aceptarPrestamo.setText("Aceptar");
+
+        button_eliminarPrestamo.setText("Eliminar");
+
+        javax.swing.GroupLayout panel_marterialesPedidosLayout = new javax.swing.GroupLayout(panel_marterialesPedidos);
+        panel_marterialesPedidos.setLayout(panel_marterialesPedidosLayout);
+        panel_marterialesPedidosLayout.setHorizontalGroup(
+            panel_marterialesPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_marterialesPedidosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_marterialesPedidosLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(button_eliminarPrestamo)
+                .addGap(18, 18, 18)
+                .addComponent(button_aceptarPrestamo)
+                .addContainerGap())
+        );
+        panel_marterialesPedidosLayout.setVerticalGroup(
+            panel_marterialesPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_marterialesPedidosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(panel_marterialesPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(button_aceptarPrestamo)
+                    .addComponent(button_eliminarPrestamo))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout panel_prestamoMaterialLayout = new javax.swing.GroupLayout(panel_prestamoMaterial);
         panel_prestamoMaterial.setLayout(panel_prestamoMaterialLayout);
         panel_prestamoMaterialLayout.setHorizontalGroup(
             panel_prestamoMaterialLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 813, Short.MAX_VALUE)
+            .addGroup(panel_prestamoMaterialLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(panel_usuariosPrestamo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(panel_marterialesPedidos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         panel_prestamoMaterialLayout.setVerticalGroup(
             panel_prestamoMaterialLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 433, Short.MAX_VALUE)
+            .addGroup(panel_prestamoMaterialLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_prestamoMaterialLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(panel_usuariosPrestamo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panel_marterialesPedidos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
 
         paneles_presta.addTab("Préstamos de Material", panel_prestamoMaterial);
+
+        javax.swing.GroupLayout panel_devolucionPrestamoLayout = new javax.swing.GroupLayout(panel_devolucionPrestamo);
+        panel_devolucionPrestamo.setLayout(panel_devolucionPrestamoLayout);
+        panel_devolucionPrestamoLayout.setHorizontalGroup(
+            panel_devolucionPrestamoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 830, Short.MAX_VALUE)
+        );
+        panel_devolucionPrestamoLayout.setVerticalGroup(
+            panel_devolucionPrestamoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 474, Short.MAX_VALUE)
+        );
+
+        paneles_presta.addTab("Devolución de Material", panel_devolucionPrestamo);
 
         panel_titulo.setBackground(new java.awt.Color(204, 204, 255));
 
@@ -934,6 +1103,44 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
 
     }//GEN-LAST:event_button_agregarMaterialActionPerformed
 
+    private void button_eliminarMaterialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_eliminarMaterialActionPerformed
+        DefaultTableModel model = (DefaultTableModel) table_materialesPrestamo.getModel();
+        int[] selectedRows = table_materialesPrestamo.getSelectedRows();
+        for (int i = selectedRows.length - 1; i >= 0; i--) {
+            model.removeRow(selectedRows[i]);
+        }
+    }//GEN-LAST:event_button_eliminarMaterialActionPerformed
+
+    private void button_enviarPrestamoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_enviarPrestamoActionPerformed
+        DefaultTableModel model = (DefaultTableModel) table_materialesPrestamo.getModel();
+        int[] selectedRows = table_materialesPrestamo.getSelectedRows();
+
+        for (int i = selectedRows.length - 1; i >= 0; i--) {
+            int rowIndex = selectedRows[i];
+            String nombre = (String) model.getValueAt(rowIndex, 0);
+            String descripcion = (String) model.getValueAt(rowIndex, 1);
+            String potenciador = (String) model.getValueAt(rowIndex, 2);
+            Material m = new Material(nombre, descripcion, potenciador);
+            usuarioIdentificado.getPrestamos().add(m);
+            try {
+                usuarioIdentificado.guardarPrestamo(ruta + usuarioIdentificado.getNombre() + recibirId() + ".csv", m);
+            } catch (IOException ex) {
+                Logger.getLogger(PrestaInterfaz.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.print(nombre + "," + descripcion + "," + potenciador + "\n");
+             model.removeRow(rowIndex);
+        }
+    }//GEN-LAST:event_button_enviarPrestamoActionPerformed
+
+    private void comboBox_materialesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBox_materialesActionPerformed
+        if (verficarMaterialSeleccionado(comboBox_materiales.getSelectedItem().toString())) {
+            comboBox_potenciador.setEnabled(true);
+        } else {
+            comboBox_potenciador.setSelectedIndex(0);
+            comboBox_potenciador.setEnabled(false);
+        }
+    }//GEN-LAST:event_comboBox_materialesActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -962,8 +1169,6 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        
-        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -976,8 +1181,11 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton button_aceptarPrestamo;
     private javax.swing.JButton button_agregarMaterial;
     private javax.swing.JButton button_agregarMaterialInventario;
+    private javax.swing.JButton button_eliminarMaterial;
+    private javax.swing.JButton button_eliminarPrestamo;
     private javax.swing.JButton button_enviarPrestamo;
     private javax.swing.JCheckBox checkBox_Potencia;
     private javax.swing.JComboBox<String> comboBox_cantidad;
@@ -986,6 +1194,8 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> comboBox_materiales;
     private javax.swing.JComboBox<String> comboBox_potenciador;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel label_cantidad;
     private javax.swing.JLabel label_estadoMaterial;
     private javax.swing.JLabel label_generarPrestamoMaterial;
@@ -994,6 +1204,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
     private javax.swing.JLabel label_potenciador;
     private javax.swing.JLabel label_prestamo;
     private javax.swing.JLabel label_titulo;
+    private javax.swing.JList<String> list_usuariosPrestamos;
     private javax.swing.JPanel panel_agregarMaterial;
     private javax.swing.JPanel panel_agregarMateriales;
     private javax.swing.JPanel panel_consultarMisPrestamos;
@@ -1002,6 +1213,7 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
     private javax.swing.JPanel panel_generarPrestamo;
     private javax.swing.JPanel panel_informacionUsuario;
     private javax.swing.JPanel panel_inventario;
+    private javax.swing.JPanel panel_marterialesPedidos;
     private javax.swing.JPanel panel_material;
     private javax.swing.JPanel panel_nombreDelUsuario;
     private javax.swing.JPanel panel_perfilUsuario;
@@ -1010,12 +1222,15 @@ public final class PrestaInterfaz extends javax.swing.JFrame {
     private javax.swing.JPanel panel_prestamos;
     private javax.swing.JPanel panel_titulo;
     private javax.swing.JPanel panel_tutor;
+    private javax.swing.JPanel panel_usuariosPrestamo;
     private javax.swing.JTabbedPane paneles_presta;
     private javax.swing.JScrollPane scrollPane_inventario;
     private javax.swing.JScrollPane scrollPane_materialesPrestamo;
     private javax.swing.JTable table_inventario;
+    private javax.swing.JTable table_materialesPedidos;
     private javax.swing.JTable table_materialesPrestamo;
     private javax.swing.JTable table_prestamos;
+    private javax.swing.JTextField textField_buscarUsuarioPrestamo;
     private javax.swing.JTextField textField_descripcion;
     private javax.swing.JTextField textField_descripcionFiltro;
     private javax.swing.JTextField textField_identificador;

@@ -4,7 +4,9 @@
  */
 package com.mycompany.presta;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -55,11 +57,11 @@ public class Administrador extends Usuario {
         return "Administrador{" + "nombre=" + super.getNombre() + ", correo=" + super.getCorreo() + ", tipoUsuario=" + super.getTipoUsuario() + ", prestamos=" + super.getPrestamos() + "inventario=" + inventario + '}';
     }
     
-    public void guardarDatos(String nombre) throws IOException {
+    public void guardarDatos() throws IOException {
         FileWriter fichero = null;
         PrintWriter pw = null;
         try {
-            fichero = new FileWriter(new File(nombre), true);
+            fichero = new FileWriter(new File("C:\\Users\\Green\\Documents\\NetBeansProjects\\Presta\\usuariosBase.csv"), true);
             pw = new PrintWriter(fichero);
                 String linea = getId() + "," + getNombre() + "," + getCorreo() + "," + getTipoUsuario();
                 pw.println(linea);
@@ -73,5 +75,5 @@ public class Administrador extends Usuario {
             }
         }
     }
-    
+      
 }
