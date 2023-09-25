@@ -4,6 +4,13 @@
  */
 package com.mycompany.presta;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Green
@@ -46,7 +53,26 @@ public class Alumno extends Usuario {
 
     @Override
     public String toString() {
-        return "Alumno{" + "matricula=" + matricula + ", tutor=" + tutor + '}';
+        return "Alumno{" + "nombre=" + super.getNombre() + ", correo=" + super.getCorreo() + ", tipoUsuario=" + super.getTipoUsuario() + "matricula=" + matricula + ", tutor=" + tutor + '}';
     }
-
+    
+    public void guardarDatos(String nombre) throws IOException {
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter(new File(nombre), true);
+            pw = new PrintWriter(fichero);
+                String linea = getMatricula() + "," + getNombre() + "," + getCorreo() + "," + tutor.getCorreo() + "," + getTipoUsuario();
+                pw.println(linea);
+        } catch (IOException ex) {
+        } finally {
+            try {
+                if (fichero != null) {
+                    fichero.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+    }
+    
 }

@@ -14,7 +14,7 @@ public class Usuario {
 
     private String nombre;
     private String correo;
-    private int tipoUsuario; //0. administrador, 1.EncargadoDeCaseta, 2. Profesor, 3. Alumno
+    private int tipoUsuario; //0. Administrador, 1. EncargadoDeCaseta, 2. Docente, 3. Alumno
     private ArrayList<Material> prestamos;
 
     public Usuario(String nombre, String correo, int tipoUsuario) {
@@ -64,4 +64,17 @@ public class Usuario {
         return "Usuario{" + "nombre=" + nombre + ", correo=" + correo + ", tipoUsuario=" + tipoUsuario + ", prestamos=" + prestamos + '}';
     }
     
+    public String getTipoUsuarioString(){
+        String usuarioTipo = "";
+        switch(tipoUsuario){
+            case 0 -> usuarioTipo = "Administrador";
+            
+            case 1 -> usuarioTipo = "Encargado De Caseta";
+                
+            case 2 -> usuarioTipo = "Docente";
+            
+            case 3 -> usuarioTipo = "Alumno";
+        }
+        return usuarioTipo;
+    }
 }

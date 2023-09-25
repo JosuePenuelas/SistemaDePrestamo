@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,43 +15,30 @@ import java.util.logging.Logger;
  *
  * @author Green
  */
-public class Administrador extends Usuario {
+public class Docente extends Usuario {
 
-    private ArrayList<Material> inventario;
-    private int Id;
+    private int numEmpleado;
 
-    public Administrador(int Id, String nombre, String correo, int tipoUsuario) {
+    public Docente(int numEmpleado, String nombre, String correo, int tipoUsuario) {
         super(nombre, correo, tipoUsuario);
-        this.Id = Id;
-        inventario = new ArrayList();
+        this.numEmpleado = numEmpleado;
     }
 
-    public Administrador() {
+    public Docente() {
+        
     }
 
-    public Administrador(ArrayList<Material> inventario) {
-        this.inventario = inventario;
+    public int getNumEmpleado() {
+        return numEmpleado;
     }
 
-    public ArrayList<Material> getInventario() {
-        return inventario;
-    }
-
-    public void setInventario(ArrayList<Material> inventario) {
-        this.inventario = inventario;
-    }
-
-    public int getId() {
-        return Id;
-    }
-
-    public void setId(int Id) {
-        this.Id = Id;
+    public void setNumEmpleado(int numEmpleado) {
+        this.numEmpleado = numEmpleado;
     }
 
     @Override
     public String toString() {
-        return "Administrador{" + "nombre=" + super.getNombre() + ", correo=" + super.getCorreo() + ", tipoUsuario=" + super.getTipoUsuario() + ", prestamos=" + super.getPrestamos() + "inventario=" + inventario + '}';
+        return "Docente{" + "nombre=" + super.getNombre() + ", correo=" + super.getCorreo() + ", tipoUsuario=" + super.getTipoUsuario() + "numEmpleado=" + numEmpleado + '}';
     }
     
     public void guardarDatos(String nombre) throws IOException {
@@ -61,7 +47,7 @@ public class Administrador extends Usuario {
         try {
             fichero = new FileWriter(new File(nombre), true);
             pw = new PrintWriter(fichero);
-                String linea = getId() + "," + getNombre() + "," + getCorreo() + "," + getTipoUsuario();
+                String linea = getNumEmpleado() + "," + getNombre() + "," + getCorreo() + "," + getTipoUsuario();
                 pw.println(linea);
         } catch (IOException ex) {
         } finally {

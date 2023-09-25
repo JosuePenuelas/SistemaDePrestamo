@@ -4,6 +4,13 @@
  */
 package com.mycompany.presta;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Green
@@ -42,4 +49,21 @@ public class Tutor {
         return "Tutor{" + "nombre=" + nombre + ", corre=" + correo + '}';
     }
 
+    public void guardarDatos(String nombre) throws IOException {
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter(new File(nombre), true);
+            pw = new PrintWriter(fichero);
+                String linea = getNombre() + "," + getCorreo();
+        } catch (IOException ex) {
+        } finally {
+            try {
+                if (fichero != null) {
+                    fichero.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+    }
 }
