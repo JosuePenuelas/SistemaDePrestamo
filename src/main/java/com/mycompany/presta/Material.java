@@ -22,6 +22,7 @@ public class Material {
     private Date fechaPedido;
     private Date fechaDevuelto;
     private boolean fueDevuelto;
+    private boolean fueAceptado;
 
     public Material(int id, String nombre, boolean necesitaPotencia) {
         this.id = id;
@@ -36,6 +37,7 @@ public class Material {
         this.potenciador = potenciador;
         fechaPedido = new Date();
         fueDevuelto = false;
+        fueAceptado = false;
     }
 
     public Material() {
@@ -113,9 +115,17 @@ public class Material {
         this.fueDevuelto = fueDevuelto;
     }
 
+    public boolean isFueAceptado() {
+        return fueAceptado;
+    }
+
+    public void setFueAceptado(boolean fueAceptado) {
+        this.fueAceptado = fueAceptado;
+    }
+
     @Override
     public String toString() {
-        return "Material{" + "id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", cantidad=" + cantidad + ", potenciador=" + potenciador + ", necesitaPotencia=" + necesitaPotencia + ", fechaPedido=" + fechaPedido + ", fechaDevuelto=" + fechaDevuelto + ", fueDevuelto=" + fueDevuelto + '}';
+        return "Material{" + "id=" + id + ", nombre=" + nombre + ", descripcion=" + descripcion + ", cantidad=" + cantidad + ", potenciador=" + potenciador + ", necesitaPotencia=" + necesitaPotencia + ", fechaPedido=" + fechaPedido + ", fechaDevuelto=" + fechaDevuelto + ", fueDevuelto=" + fueDevuelto + ", fueAceptado=" + fueAceptado + '}';
     }
 
 }

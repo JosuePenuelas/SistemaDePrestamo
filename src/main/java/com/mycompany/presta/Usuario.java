@@ -72,21 +72,25 @@ public class Usuario {
     public String toString() {
         return "Usuario{" + "nombre=" + nombre + ", correo=" + correo + ", tipoUsuario=" + tipoUsuario + ", prestamos=" + prestamos + '}';
     }
-    
-    public String getTipoUsuarioString(){
+
+    public String getTipoUsuarioString() {
         String usuarioTipo = "";
-        switch(tipoUsuario){
-            case 0 -> usuarioTipo = "Administrador";
-            
-            case 1 -> usuarioTipo = "Encargado De Caseta";
-                
-            case 2 -> usuarioTipo = "Docente";
-            
-            case 3 -> usuarioTipo = "Alumno";
+        switch (tipoUsuario) {
+            case 0 ->
+                usuarioTipo = "Administrador";
+
+            case 1 ->
+                usuarioTipo = "Encargado De Caseta";
+
+            case 2 ->
+                usuarioTipo = "Docente";
+
+            case 3 ->
+                usuarioTipo = "Alumno";
         }
         return usuarioTipo;
     }
-    
+
     public void cargarPrestamos(String nombre) throws IOException, ParseException {
         FileReader fr = null;
         BufferedReader br = null;
@@ -97,10 +101,13 @@ public class Usuario {
             while ((linea = br.readLine()) != null) {
                 String arreglo[] = linea.split(",");
                 Material m = new Material(arreglo[0], arreglo[1], arreglo[2]);
-                SimpleDateFormat sdf = new SimpleDateFormat(arreglo[3]);
-                Date date = sdf.parse(arreglo[3]);
-                m.setFechaPedido(date);
-                m.setFueDevuelto(Boolean.parseBoolean(arreglo[4]));
+                SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+                try {
+                    m.setFechaPedido(sdf.parse(arreglo[3]));
+                } catch (ParseException e) {
+                }
+                m.setFueAceptado(Boolean.parseBoolean(arreglo[4]));
+                m.setFueDevuelto(Boolean.parseBoolean(arreglo[5]));
                 prestamos.add(m);
             }
         } catch (IOException | NumberFormatException ex) {
@@ -113,15 +120,15 @@ public class Usuario {
             }
         }
     }
-    
+
     public void guardarPrestamo(String nombre, Material material) throws IOException {
         FileWriter fichero = null;
         PrintWriter pw = null;
         try {
             fichero = new FileWriter(new File(nombre), true);
             pw = new PrintWriter(fichero);
-            String linea = material.getNombre() + "," + material.getDescripcion() + "," + material.getPotenciador() + "," + material.getFechaPedido() + "," + material.isFueDevuelto();
-            pw.println(linea); 
+            String linea = material.getNombre() + "," + material.getDescripcion() + "," + material.getPotenciador() + "," + material.getFechaPedido() + "," + material.isFueAceptado() + "," + material.isFueDevuelto() + "," + material.getFechaDevuelto();
+            pw.println(linea);
         } catch (IOException ex) {
         } finally {
             try {
@@ -132,5 +139,25 @@ public class Usuario {
             }
         }
     }
-    
+
+    public int PrestamoDevueltos() {
+        int n = 0;
+        for (Material material : prestamos) {
+            if (material.isFueDevuelto()) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    public int PrestamoNoDevueltos() {
+        int n = 0;
+        for (Material material : prestamos) {
+            if (!material.isFueDevuelto()) {
+                n++;
+            }
+        }
+        return n;
+    }
+
 }
